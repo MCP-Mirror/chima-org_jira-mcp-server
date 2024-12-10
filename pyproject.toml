@@ -1,0 +1,22 @@
+[project]
+name = "jira-service"
+version = "0.1.0"
+description = "A MCP server project"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+ "httpx>=0.28.1",
+ "jira>=3.8.0",
+ "mcp>=1.1.1",
+ "python-dotenv>=1.0.1",
+]
+[[project.authors]]
+name = "Eddie Ho"
+email = "eddie@withchima.com"
+
+[build-system]
+requires = [ "hatchling",]
+build-backend = "hatchling.build"
+
+[project.scripts]
+jira-service = "jira_service:main"
