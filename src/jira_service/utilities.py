@@ -9,31 +9,34 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # API configuration
-JIRA_API_KEY = os.getenv("PERSONAL_JIRA_API_KEY")
-if not JIRA_API_KEY:
-    raise ValueError("JIRA_API_KEY environment variable required")
-
 PERSONAL_JIRA_SERVER = "https://eddieho.atlassian.net"
 PERSONAL_JIRA_USER = "edwin.ho.bj@gmail.com"
+PERSONAL_JIRA_API_KEY = os.getenv("PERSONAL_JIRA_API_KEY")
+if not PERSONAL_JIRA_API_KEY:
+    raise ValueError("PERSONAL_JIRA_API_KEY environment variable required")
+
 WORK_JIRA_SERVER = "https://withchima.atlassian.net"
 WORK_JIRA_USER = "eddie@withchima.com"
+WORK_JIRA_API_KEY = os.getenv("WORK_JIRA_API_KEY")
+if not WORK_JIRA_API_KEY:
+    raise ValueError("WORK_JIRA_API_KEY environment variable required")
 
 # ============================
 # Jira project utilities
 # ============================
 
 
-async def fetch_jira_projects(number: int = 10) -> list[dict]:
+async def fetch_jira_projects() -> list[dict]:
     """
     Fetch a list of Jira projects.
     """
     jira = JIRA(
         server=WORK_JIRA_SERVER,
-        basic_auth=(WORK_JIRA_USER, JIRA_API_KEY),
+        basic_auth=(WORK_JIRA_USER, WORK_JIRA_API_KEY),
     )
 
     projects = []
-    project_results = jira.projects()[:number]
+    project_results = jira.projects()
     for project in project_results:
         projects.append({"id": project.id, "key": project.key, "name": project.name})
 
@@ -46,7 +49,7 @@ async def fetch_jira_project_details(project_id: str) -> dict[str, Any]:
     """
     jira = JIRA(
         server=WORK_JIRA_SERVER,
-        basic_auth=(WORK_JIRA_USER, JIRA_API_KEY),
+        basic_auth=(WORK_JIRA_USER, WORK_JIRA_API_KEY),
     )
 
     return jira.project(project_id).raw
@@ -64,8 +67,8 @@ async def search_jira_issues(
     Fetch a list of Jira issues for a specific project.
     """
     jira = JIRA(
-        server=PERSONAL_JIRA_SERVER,
-        basic_auth=(PERSONAL_JIRA_USER, JIRA_API_KEY),
+        server=WORK_JIRA_SERVER,
+        basic_auth=(WORK_JIRA_USER, WORK_JIRA_API_KEY),
     )
 
     # Build the query
@@ -97,7 +100,7 @@ async def add_jira_issue_comment(issue_id: str, comment: str) -> dict:
     """
     jira = JIRA(
         server=PERSONAL_JIRA_SERVER,
-        basic_auth=(PERSONAL_JIRA_USER, JIRA_API_KEY),
+        basic_auth=(PERSONAL_JIRA_USER, PERSONAL_JIRA_API_KEY),
     )
 
     # Add comment to issue

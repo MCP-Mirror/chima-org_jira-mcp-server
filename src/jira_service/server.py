@@ -57,15 +57,7 @@ async def handle_list_tools() -> list[Tool]:
             description="List all Jira projects",
             inputSchema={
                 "type": "object",
-                "properties": {
-                    "number": {
-                        "type": "number",
-                        "description": "Maximum number of projects to list (default 10)",
-                        "minimum": 1,
-                        "maximum": 100,
-                        "default": 10,
-                    },
-                },
+                "properties": {},
             },
         ),
         Tool(
@@ -139,12 +131,9 @@ async def call_tool(name: str, arguments: dict) -> CallToolResult:
     Call a Jira tool
     """
     if name == "jira_list_projects":
-        # Set default number of projects to list to 10
-        number = int(arguments.get("number", 10))
-
         try:
             # Fetch projects from Jira
-            projects = await fetch_jira_projects(number)
+            projects = await fetch_jira_projects()
 
             # Return projects as a JSON string
             return [TextContent(type="text", text=json.dumps(projects, indent=2))]
